@@ -1,0 +1,12 @@
+{
+  "name": "realm-of-echoes-peerserver",
+  "version": "1.0.0",
+  "description": "PeerJS signaling server for Realm of Echoes",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "peer": "^0.6.1"
+  }
+}
