@@ -5,7 +5,6 @@ const http = require('http');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// CORS for all origins
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -14,19 +13,17 @@ app.use((req, res, next) => {
   next();
 });
 
-// Health check
 app.get('/', (req, res) => {
-  res.json({ status: 'ok', service: 'Realm of Echoes PeerJS Broker', peers: 0 });
+  res.json({ status: 'ok', service: 'Realm of Echoes PeerJS Broker' });
 });
 
-// Create HTTP server explicitly
 const server = http.createServer(app);
 
-// Mount PeerJS — path must match what client sends
-// Client uses path:'/' so PeerJS appends 'peerjs' → connects to /peerjs
+// path:'/' means PeerJS WebSocket endpoint is at /peerjs
+// which matches what the client connects to when client also uses path:'/'
 const peerServer = PeerServer({
   server,
-  path: '/peerjs',
+  path: '/',
   proxied: true,
   allow_discovery: false,
   concurrent_limit: 500,
@@ -35,13 +32,7 @@ const peerServer = PeerServer({
   key: 'peerjs',
 });
 
-peerServer.on('connection', client => {
-  console.log(`[+] peer: ${client.getId()}`);
-});
-peerServer.on('disconnect', client => {
-  console.log(`[-] peer: ${client.getId()}`);
-});
+peerServer.on('connection', client => console.log(`[+] ${client.getId()}`));
+peerServer.on('disconnect', client => console.log(`[-] ${client.getId()}`));
 
-server.listen(PORT, () => {
-  console.log(`PeerJS broker listening on port ${PORT}`);
-});
+server.listen(PORT, () => console.log(`Broker on port ${PORT}`));
